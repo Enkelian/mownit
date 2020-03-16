@@ -1,30 +1,28 @@
 import numpy as np
 
-N = 4
+N = 3
 
 
-def countU(A):
-    U = np.array(A)
-    L = np.zeros((N, N))
+def LU(a):
+    u = np.copy(a)
+    l = np.zeros((N, N))
+
     for i in range(N):
-        L[i,i] = 1
-        j = i
-        while j < N and U[j, i] == 0:
-            j += 1
-        U[[j, i]] = U[[i, j]]  # swapping rows
-        U[i] *= (1 / U[i, i])
-        for k in range(i + 1, N):
-            U[k] -= U[i] * U[k, i]
-            U[k, i] = 0
-        for k in range(i):
-            L[k, i] = U[k, i]/U[i, i]
-    print()
-    print(U)
-    return U
+        l[i, i] = 1
+        for k in range(i+1, N):
+            print(k)
+            factor = u[k, i]/u[i, i]
+            u[k] = u[k] - u[i] * factor
+            l[k, i] = factor
+            print(factor)
+            print(u[k])
+            print(u)
+            print(l)
+    print(np.dot(l, u))
+    return l, u
 
 
-
-A1 = np.random.rand(N, N)
-# L = countL(A1)
-U = countU(A1)
-# print(L*U - A1)
+a = np.array([[4.,2.,1.], [2.,2.,4.], [4.,1.,2.]])
+LU(a)
+l, u = LU(a)
+print(np.dot(l,u))
