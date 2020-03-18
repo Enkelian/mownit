@@ -9,6 +9,15 @@ def LU(a):
 
     for i in range(N):
         l[i, i] = 1
+        j = i
+        while j < N and u[j, i] == 0:
+            j += 1
+        if j == N:
+            return False
+        a[[j, i]] = a[[i, j]]  # swapping rows
+        u[[j, i]] = u[[i, j]]
+        u[i] /= u[i, i]
+        a[i] /= a[i, i]
         for k in range(i+1, N):
             print(k)
             factor = u[k, i]/u[i, i]

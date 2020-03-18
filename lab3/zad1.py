@@ -67,7 +67,7 @@ print(newton(f3, df3, a3, b3, 10e-7, 10, 10000))
 def secand(f, a, b, eps, prec, iters):
     mp.dps = prec
     i = 2
-    xs = [a, b]
+    xs = [(a+b)/2, b]
     while abs(xs[i-1] - xs[i-2]) > eps and i < iters:
         xs.append((f(xs[i-1]) * xs[i-2] - f(xs[i-2]) * xs[i-1]) / (f(xs[i-1]) - f(xs[i-2])))
         i += 1
