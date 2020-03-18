@@ -1,11 +1,13 @@
 import numpy as np
 import scipy.linalg
-N = 3
+N = 4
 
 
 def LU(a):
     u = np.copy(a)
     l = np.zeros((N, N))
+    u = u.astype(float)
+    l = l.astype(float)
     for i in range(N):
         l[i, i] = 1
         for k in range(i+1, N):
@@ -22,18 +24,17 @@ def LUP(a):
     u = np.copy(a)
     l = np.zeros((N, N))
     p = np.zeros((N, N))
+    d = np.zeros((N, N))
     np.fill_diagonal(p, 1)
-    # np.fill_diagonal(l, 1)
+    u = u.astype(float)
+    l = l.astype(float)
+    p = p.astype(float)
+
     for i in range(N):
-        j = i
-        while j < N and u[j, i] == 0:
-            j += 1
-        if j == N:
-            return False
-        # a[[j, i]] = a[[i, j]]
-        u[[j, i]] = u[[i, j]]
-        p[[j, i]] = p[[i, j]]
-        l[[j, i]] = l[[i,j]]
+        p[i] = p[i] * (1/np.max(u[i]))
+        u[i] = u[i] * (1 / np.max(u[i]))
+
+    for i in range(N):
         j = i
         max = u[i, i]
         max_ind = i
@@ -42,10 +43,10 @@ def LUP(a):
                 max = u[j, i]
                 max_ind = j
             j += 1
-        # a[[max_ind, i]] = a[[i, max_ind]]  # swapping rows
         u[[max_ind, i]] = u[[i, max_ind]]
         p[[max_ind, i]] = p[[i, max_ind]]
         l[[max_ind, i]] = l[[i, max_ind]]
+
         for k in range(i + 1, N):
             factor = u[k, i] / u[i, i]
             u[k] = u[k] - u[i] * factor
@@ -62,4 +63,5 @@ a.astype(int)
 # a = np.array([[4.,2.,1.], [2.,2.,4.], [4.,1.,2.]])
 # LU(a)
 l, u, p= LUP(a)
+
 
