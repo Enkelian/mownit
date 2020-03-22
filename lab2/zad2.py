@@ -1,44 +1,41 @@
 import numpy as np
 import scipy.linalg
-N = 4
 
 
 def LU(a):
+    n = len(a)
     u = np.copy(a)
-    l = np.zeros((N, N))
+    l = np.zeros((n, n))
     u = u.astype(float)
     l = l.astype(float)
-    for i in range(N):
+    for i in range(n):
         l[i, i] = 1
-        for k in range(i+1, N):
-            factor = u[k, i]/u[i, i]
+        for k in range(i + 1, n):
+            factor = u[k, i] / u[i, i]
             u[k] = u[k] - u[i] * factor
             l[k, i] = factor
-    print(np.dot(l, u))
-    print(a)
     return l, u
 
 
 def LUP(a):
-    print(a)
+    n = len(a)
     u = np.copy(a)
-    l = np.zeros((N, N))
-    p = np.zeros((N, N))
-    d = np.zeros((N, N))
+    l = np.zeros((n, n))
+    p = np.zeros((n, n))
     np.fill_diagonal(p, 1)
     u = u.astype(float)
     l = l.astype(float)
     p = p.astype(float)
 
-    for i in range(N):
-        p[i] = p[i] * (1/np.max(u[i]))
-        u[i] = u[i] * (1 / np.max(u[i]))
+    for i in range(n):  # scaling
+        p[i] = p[i] / np.max(u[i])
+        u[i] = u[i] / np.max(u[i])
 
-    for i in range(N):
+    for i in range(n):  # partial pivoting
         j = i
         max = u[i, i]
         max_ind = i
-        while j < N:
+        while j < n:
             if u[j, i] > max:
                 max = u[j, i]
                 max_ind = j
@@ -47,21 +44,20 @@ def LUP(a):
         p[[max_ind, i]] = p[[i, max_ind]]
         l[[max_ind, i]] = l[[i, max_ind]]
 
-        for k in range(i + 1, N):
+        for k in range(i + 1, n):
             factor = u[k, i] / u[i, i]
             u[k] = u[k] - u[i] * factor
+            u[k, i] = 0
             l[k, i] = factor
     np.fill_diagonal(l, 1)
-    print(np.dot(p, a))
-    print(np.dot(l, u))
     return l, u, p
 
 
+def exec_LUP_rand(n):
+    a = np.random.randint(20, size=(n, n))
+    a.astype(int)
+    l, u, p = LUP(a)
+    print(max(list(map(max, np.dot(p, a) - np.dot(l, u)))))
 
-a=np.random.randint(20, size=(N,N))
-a.astype(int)
-# a = np.array([[4.,2.,1.], [2.,2.,4.], [4.,1.,2.]])
-# LU(a)
-l, u, p= LUP(a)
 
-
+exec_LUP_rand(100)
